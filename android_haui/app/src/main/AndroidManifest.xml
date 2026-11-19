@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Android_haui">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -21,6 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Màn hình chi tiết phòng -->
+        <activity
+            android:name=".activity.RoomDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

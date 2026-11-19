@@ -1,5 +1,8 @@
 
-package com.example.android_haui;
+package com.example.android_haui.fragment;
+
+import com.example.android_haui.R;
+import com.example.android_haui.activity.RoomDetailActivity;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -101,11 +103,11 @@ public class RoomListFragment extends Fragment {
 
                     Room room = filteredRooms.get(position);
 
-                    Toast.makeText(
+                    // Mở màn hình chi tiết phòng
+                    RoomDetailActivity.open(
                             requireContext(),
-                            "Đã chọn phòng " + room.getRoomCode(),
-                            Toast.LENGTH_SHORT
-                    ).show();
+                            room.getRoomCode()
+                    );
                 }
         );
     }

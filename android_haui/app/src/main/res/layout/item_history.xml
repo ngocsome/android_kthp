@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Một dòng lịch sử đổi trạng thái -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
+
+    <TextView
+        android:id="@+id/txtHistoryOld"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="3dp"
+        android:text="Trống"
+        android:textSize="11sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="6dp"
+        android:text="→"
+        android:textColor="#8992A5"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/txtHistoryNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="3dp"
+        android:text="Bảo trì"
+        android:textSize="11sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/txtHistoryTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:text="19/11/2026 20:30"
+        android:textColor="#8992A5"
+        android:textSize="12sp"/>
+
+</LinearLayout>
