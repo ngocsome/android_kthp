@@ -1,6 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F7F8FC">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="20dp">
+
+        <!-- Tiêu đề -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thống kê"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="#19243A"
+            android:paddingHorizontal="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thống kê phòng học theo trạng thái"
+            android:textSize="13sp"
+            android:textColor="#8992A5"
+            android:paddingHorizontal="4dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="18dp"/>
+
+        <!-- Tổng số phòng -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/bg_filter_selected">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tổng số phòng - Khu A CS1"
+                android:textColor="#D6DEF5"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:id="@+id/txtTotalRooms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="15"
+                android:textColor="#FFFFFF"
+                android:textSize="34sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Thống kê theo trạng thái (chạm để xem danh sách) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:paddingHorizontal="4dp"
+            android:text="Theo trạng thái"
+            android:textColor="#263247"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <include
+            android:id="@+id/statEmpty"
+            layout="@layout/item_stat_status"/>
+
+        <include
+            android:id="@+id/statInUse"
+            layout="@layout/item_stat_status"/>
+
+        <include
+            android:id="@+id/statMaintenance"
+            layout="@layout/item_stat_status"/>
+
+        <!-- Thống kê theo tầng -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:paddingHorizontal="4dp"
+            android:text="Theo tầng"
+            android:textColor="#263247"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:id="@+id/layoutFloorStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="6dp"
+            android:background="@drawable/bg_room_card"/>
+
+        <!-- Thiết bị hỏng -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Thiết bị hỏng"
+                android:textColor="#263247"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/txtBrokenSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 thiết bị"
+                android:textColor="#C8423B"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutBrokenRooms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:paddingVertical="4dp"
+            android:background="@drawable/bg_room_card"/>
+
+        <!-- Danh sách phòng của trạng thái đang chọn -->
+        <TextView
+            android:id="@+id/txtSelectedStatusTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:paddingHorizontal="4dp"
+            android:text="Phòng trống (5)"
+            android:textColor="#263247"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:id="@+id/layoutStatusRooms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <TextView
+            android:id="@+id/txtStatusRoomsEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Không có phòng nào"
+            android:textColor="#8992A5"
+            android:textSize="14sp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hộp thoại thêm / sửa thiết bị -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tên thiết bị"
+        android:textColor="#526078"
+        android:textSize="12sp"/>
+
+    <AutoCompleteTextView
+        android:id="@+id/edtEquipmentName"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:paddingHorizontal="14dp"
+        android:background="@drawable/bg_search"
+        android:completionThreshold="1"
+        android:hint="Ví dụ: Máy chiếu"
+        android:inputType="textCapSentences"
+        android:singleLine="true"
+        android:textColor="#19243A"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Số lượng"
+        android:textColor="#526078"
+        android:textSize="12sp"/>
+
+    <EditText
+        android:id="@+id/edtEquipmentQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="6dp"
+        android:paddingHorizontal="14dp"
+        android:background="@drawable/bg_search"
+        android:hint="Ví dụ: 2"
+        android:inputType="number"
+        android:maxLength="4"
+        android:singleLine="true"
+        android:textColor="#19243A"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Tình trạng"
+        android:textColor="#526078"
+        android:textSize="12sp"/>
+
+    <RadioGroup
+        android:id="@+id/rgCondition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbGood"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:checked="true"
+            android:text="Tốt"
+            android:textSize="14sp"
+            android:buttonTint="#239653"/>
+
+        <RadioButton
+            android:id="@+id/rbBroken"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:text="Hỏng"
+            android:textSize="14sp"
+            android:buttonTint="#C8423B"/>
+    </RadioGroup>
+
+</LinearLayout>

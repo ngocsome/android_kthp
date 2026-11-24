@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Màu chủ đạo của ứng dụng -->
+    <color name="primary">#2447B2</color>
+    <color name="background">#F7F8FC</color>
+    <color name="text_dark">#19243A</color>
+    <color name="text_gray">#8992A5</color>
+    <color name="border">#EEF0F5</color>
+    <color name="nav_indicator">#E5EEFF</color>
 </resources>

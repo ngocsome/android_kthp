@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.android_haui.model.Equipment;
 import com.example.android_haui.model.Room;
+import com.example.android_haui.model.StatusHistory;
 import com.example.android_haui.utils.Constants;
 
 import java.util.ArrayList;
@@ -14,9 +16,13 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "RoomManagement.db";
-    private static final int DATABASE_VERSION = 1;
+    // Version 2: thêm bảng Equipment (thiết bị trong phòng)
+    // Version 3: thêm bảng StatusHistory (lịch sử đổi trạng thái)
+    private static final int DATABASE_VERSION = 3;
 
     private static final String TABLE_ROOM = "Room";
+    private static final String TABLE_EQUIPMENT = "Equipment";
+    private static final String TABLE_HISTORY = "StatusHistory";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -35,6 +41,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         insertInitialRooms(db);
+
+        createEquipmentTable(db);
+
+        createHistoryTable(db);
+    }
+
+    // Tạo bảng lịch sử thay đổi trạng thái
+    private void createHistoryTable(SQLiteDatabase db) {
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_HISTORY + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "room_code TEXT NOT NULL, " +
+                "old_status TEXT NOT NULL, " +
+                "new_status TEXT NOT NULL, " +
+                "changed_at INTEGER NOT NULL)");
+    }
+
+    // Tạo bảng thiết bị và thêm thiết bị mặc định cho các phòng
+    private void createEquipmentTable(SQLiteDatabase db) {
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_EQUIPMENT + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "room_code TEXT NOT NULL, " +
+                "name TEXT NOT NULL, " +
+                "quantity INTEGER NOT NULL, " +
+                "condition TEXT NOT NULL)");
+
+        String[] names = {"Máy chiếu", "Điều hòa", "Bàn ghế sinh viên", "Bảng trắng"};
+        int[] quantities = {1, 2, 40, 1};
+
+        Cursor cursor = db.rawQuery("SELECT room_code FROM " + TABLE_ROOM, null);
+
+        while (cursor.moveToNext()) {
+            String roomCode = cursor.getString(0);
+
+            for (int i = 0; i < names.length; i++) {
+                ContentValues values = new ContentValues();
+                values.put("room_code", roomCode);
+                values.put("name", names[i]);
+                values.put("quantity", quantities[i]);
+                values.put("condition", Constants.GOOD);
+                db.insert(TABLE_EQUIPMENT, null, values);
+            }
+        }
+
+        cursor.close();
     }
 
     // 2. Thêm 15 phòng ban đầu
@@ -129,18 +181,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return 0;
         }
 
+        Room room = getRoomByCode(roomCode);
+
+        if (room == null) {
+            return 0;
+        }
+
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
         values.put("status", status);
 
-        return db.update(
+        int result = db.update(
                 TABLE_ROOM,
                 values,
                 "room_code = ?",
                 new String[]{roomCode}
         );
+
+        // Ghi lại lịch sử nếu trạng thái thực sự thay đổi
+        if (result > 0 && !status.equals(room.getStatus())) {
+
+            ContentValues history = new ContentValues();
+            history.put("room_code", roomCode);
+            history.put("old_status", room.getStatus());
+            history.put("new_status", status);
+            history.put("changed_at", System.currentTimeMillis());
+
+            db.insert(TABLE_HISTORY, null, history);
+        }
+
+        return result;
     }
 
     // 7. Tìm kiếm phòng
@@ -206,7 +278,149 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    // 10. Chuyển Cursor thành đối tượng Room
+    // 10. Lấy danh sách phòng theo trạng thái
+    public ArrayList<Room> getRoomsByStatus(String status) {
+
+        ArrayList<Room> rooms = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM Room WHERE status = ? ORDER BY floor, room_code",
+                new String[]{status}
+        );
+
+        while (cursor.moveToNext()) {
+            rooms.add(cursorToRoom(cursor));
+        }
+
+        cursor.close();
+
+        return rooms;
+    }
+
+    // 11. Lấy danh sách thiết bị của một phòng
+    public ArrayList<Equipment> getEquipmentsByRoom(String roomCode) {
+
+        ArrayList<Equipment> list = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM " + TABLE_EQUIPMENT + " WHERE room_code = ? ORDER BY id",
+                new String[]{roomCode}
+        );
+
+        while (cursor.moveToNext()) {
+            list.add(new Equipment(
+                    cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("room_code")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                    cursor.getInt(cursor.getColumnIndexOrThrow("quantity")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("condition"))
+            ));
+        }
+
+        cursor.close();
+
+        return list;
+    }
+
+    // 12. Thêm thiết bị
+    public long addEquipment(Equipment equipment) {
+
+        ContentValues values = new ContentValues();
+        values.put("room_code", equipment.getRoomCode());
+        values.put("name", equipment.getName());
+        values.put("quantity", equipment.getQuantity());
+        values.put("condition", equipment.getCondition());
+
+        return getWritableDatabase().insert(TABLE_EQUIPMENT, null, values);
+    }
+
+    // 13. Sửa thiết bị
+    public int updateEquipment(Equipment equipment) {
+
+        ContentValues values = new ContentValues();
+        values.put("name", equipment.getName());
+        values.put("quantity", equipment.getQuantity());
+        values.put("condition", equipment.getCondition());
+
+        return getWritableDatabase().update(
+                TABLE_EQUIPMENT,
+                values,
+                "id = ?",
+                new String[]{String.valueOf(equipment.getId())}
+        );
+    }
+
+    // 14. Xóa thiết bị
+    public int deleteEquipment(int id) {
+
+        return getWritableDatabase().delete(
+                TABLE_EQUIPMENT,
+                "id = ?",
+                new String[]{String.valueOf(id)}
+        );
+    }
+
+    // 15. Lấy lịch sử đổi trạng thái của phòng (mới nhất trước)
+    public ArrayList<StatusHistory> getStatusHistory(String roomCode, int limit) {
+
+        ArrayList<StatusHistory> list = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM " + TABLE_HISTORY +
+                        " WHERE room_code = ? ORDER BY changed_at DESC, id DESC LIMIT " + limit,
+                new String[]{roomCode}
+        );
+
+        while (cursor.moveToNext()) {
+            list.add(new StatusHistory(
+                    cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("room_code")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("old_status")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("new_status")),
+                    cursor.getLong(cursor.getColumnIndexOrThrow("changed_at"))
+            ));
+        }
+
+        cursor.close();
+
+        return list;
+    }
+
+    // 16. Lấy toàn bộ thiết bị hỏng (sắp xếp theo phòng)
+    public ArrayList<Equipment> getBrokenEquipments() {
+
+        ArrayList<Equipment> list = new ArrayList<>();
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM " + TABLE_EQUIPMENT +
+                        " WHERE condition = ? ORDER BY room_code, id",
+                new String[]{Constants.BROKEN}
+        );
+
+        while (cursor.moveToNext()) {
+            list.add(new Equipment(
+                    cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("room_code")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                    cursor.getInt(cursor.getColumnIndexOrThrow("quantity")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("condition"))
+            ));
+        }
+
+        cursor.close();
+
+        return list;
+    }
+
+    // 17. Chuyển Cursor thành đối tượng Room
     private Room cursorToRoom(Cursor cursor) {
 
         int id = cursor.getInt(
@@ -234,6 +448,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int oldVersion,
             int newVersion
     ) {
-        // Xử lý nâng cấp database khi thay đổi cấu trúc.
+        // Nâng cấp từng bước, giữ nguyên dữ liệu cũ
+        if (oldVersion < 2) {
+            createEquipmentTable(db);
+        }
+
+        if (oldVersion < 3) {
+            createHistoryTable(db);
+        }
     }
 }

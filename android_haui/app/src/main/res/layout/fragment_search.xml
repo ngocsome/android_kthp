@@ -1,6 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F7F8FC"
+    android:paddingTop="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Tiêu đề -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tìm kiếm phòng"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="#19243A"
+        android:paddingHorizontal="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tìm theo mã phòng và tầng"
+        android:textSize="13sp"
+        android:textColor="#8992A5"
+        android:paddingHorizontal="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="18dp"/>
+
+    <!-- Ô tìm kiếm -->
+    <EditText
+        android:id="@+id/edtSearchKeyword"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:paddingHorizontal="14dp"
+        android:background="@drawable/bg_search"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="10dp"
+        android:drawableTint="#8992A5"
+        android:hint="Nhập mã phòng, ví dụ 1402..."
+        android:textSize="14sp"
+        android:singleLine="true"
+        android:imeOptions="actionSearch"
+        android:inputType="number"/>
+
+    <!-- Lọc theo tầng -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:id="@+id/btnSearchFloorAll"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Tất cả tầng"
+                android:gravity="center"
+                android:paddingHorizontal="15dp"
+                android:background="@drawable/bg_filter_selected"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/btnSearchFloor14"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Tầng 14"
+                android:gravity="center"
+                android:paddingHorizontal="15dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_filter_normal"
+                android:textColor="#526078"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/btnSearchFloor15"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Tầng 15"
+                android:gravity="center"
+                android:paddingHorizontal="15dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_filter_normal"
+                android:textColor="#526078"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/btnSearchFloor16"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Tầng 16"
+                android:gravity="center"
+                android:paddingHorizontal="15dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_filter_normal"
+                android:textColor="#526078"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/txtSearchResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Kết quả: 15 phòng"
+        android:textColor="#263247"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingHorizontal="20dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="8dp"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/lvSearchResult"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10dp"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="12dp"
+            android:clipToPadding="false"
+            android:background="@android:color/transparent"/>
+
+        <TextView
+            android:id="@+id/txtSearchEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Không tìm thấy phòng học"
+            android:textColor="#8992A5"
+            android:textSize="14sp"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+
+</LinearLayout>
