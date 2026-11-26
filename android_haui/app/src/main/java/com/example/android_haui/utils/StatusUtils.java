@@ -1,78 +1,77 @@
 package com.example.android_haui.utils;
 
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.widget.TextView;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
+import androidx.core.widget.TextViewCompat;
 
 import com.example.android_haui.R;
 
-// Tiện ích hiển thị trạng thái phòng và bộ lọc dạng chip
 public class StatusUtils {
 
     public static final String[] STATUSES = {
-            Constants.EMPTY,
-            Constants.IN_USE,
-            Constants.MAINTENANCE
+            Constants.EMPTY, Constants.IN_USE, Constants.MAINTENANCE
     };
 
-    // Tên trạng thái hiển thị
-    public static String getLabel(String status) {
-        if (Constants.EMPTY.equals(status)) return "Trống";
-        if (Constants.IN_USE.equals(status)) return "Đang sử dụng";
-        if (Constants.MAINTENANCE.equals(status)) return "Bảo trì";
-        return "Không xác định";
+    @StringRes
+    public static int label(String status) {
+        if (Constants.EMPTY.equals(status)) return R.string.overview_empty;
+        if (Constants.IN_USE.equals(status)) return R.string.overview_in_use;
+        if (Constants.MAINTENANCE.equals(status)) return R.string.overview_maintenance;
+        return R.string.unknown;
     }
 
-    // Màu chữ của trạng thái
-    public static int getTextColor(String status) {
-        if (Constants.EMPTY.equals(status)) return Color.parseColor("#239653");
-        if (Constants.IN_USE.equals(status)) return Color.parseColor("#3264BB");
-        if (Constants.MAINTENANCE.equals(status)) return Color.parseColor("#B77B18");
-        return Color.DKGRAY;
+    @ColorRes
+    public static int foreground(String status) {
+        if (Constants.EMPTY.equals(status)) return R.color.empty_fg;
+        if (Constants.IN_USE.equals(status)) return R.color.use_fg;
+        if (Constants.MAINTENANCE.equals(status)) return R.color.maintenance_fg;
+        return R.color.text_gray;
     }
 
-    // Màu nền nhạt của trạng thái
-    public static int getBgColor(String status) {
-        if (Constants.EMPTY.equals(status)) return Color.parseColor("#E3F5EA");
-        if (Constants.IN_USE.equals(status)) return Color.parseColor("#E5EEFF");
-        if (Constants.MAINTENANCE.equals(status)) return Color.parseColor("#FFF1D5");
-        return Color.parseColor("#EEEEEE");
+    @ColorRes
+    private static int background(String status) {
+        if (Constants.EMPTY.equals(status)) return R.color.empty_bg;
+        if (Constants.IN_USE.equals(status)) return R.color.use_bg;
+        if (Constants.MAINTENANCE.equals(status)) return R.color.maintenance_bg;
+        return R.color.surface;
     }
 
-    // Hiển thị nhãn trạng thái dạng badge bo góc
-    public static void applyBadge(TextView textView, String status) {
-        GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(20);
-        background.setColor(getBgColor(status));
-
-        textView.setText(getLabel(status));
-        textView.setTextColor(getTextColor(status));
-        textView.setBackground(background);
+    @DrawableRes
+    private static int icon(String status) {
+        if (Constants.EMPTY.equals(status)) return R.drawable.ic_status_empty;
+        if (Constants.IN_USE.equals(status)) return R.drawable.ic_status_use;
+        if (Constants.MAINTENANCE.equals(status)) return R.drawable.ic_status_maintenance;
+        return 0;
     }
 
-    // Badge tình trạng thiết bị: Tốt (xanh) / Hỏng (đỏ)
-    public static void applyConditionBadge(TextView textView, String condition) {
-        boolean broken = Constants.BROKEN.equals(condition);
-
-        GradientDrawable background = new GradientDrawable();
-        background.setCornerRadius(20);
-        background.setColor(Color.parseColor(broken ? "#FDE7E6" : "#E3F5EA"));
-
-        textView.setText(broken ? "Hỏng" : "Tốt");
-        textView.setTextColor(Color.parseColor(broken ? "#C8423B" : "#239653"));
-        textView.setBackground(background);
+    public static void applyBadge(TextView view, String status) {
+        bindBadge(view, label(status), foreground(status), background(status), icon(status));
     }
 
-    // Cập nhật giao diện nhóm chip lọc (chip được chọn màu xanh đậm)
-    public static void updateChips(TextView[] chips, int selectedIndex) {
-        for (int i = 0; i < chips.length; i++) {
-            if (i == selectedIndex) {
-                chips[i].setBackgroundResource(R.drawable.bg_filter_selected);
-                chips[i].setTextColor(Color.WHITE);
-            } else {
-                chips[i].setBackgroundResource(R.drawable.bg_filter_normal);
-                chips[i].setTextColor(Color.parseColor("#526078"));
-            }
+    public static void applyConditionBadge(TextView view, String condition) {
+        if (Constants.BROKEN.equals(condition)) {
+            bindBadge(view, R.string.broken, R.color.broken_fg, R.color.broken_bg, 0);
+        } else if (Constants.GOOD.equals(condition)) {
+            bindBadge(view, R.string.good, R.color.empty_fg, R.color.empty_bg, 0);
+        } else {
+            bindBadge(view, R.string.unknown, R.color.text_gray, R.color.surface, 0);
         }
+    }
+
+    private static void bindBadge(TextView view, @StringRes int label, @ColorRes int foreground,
+                                  @ColorRes int background, @DrawableRes int icon) {
+        Context context = view.getContext();
+        ColorStateList ink = context.getColorStateList(foreground);
+        view.setText(label);
+        view.setTextColor(ink);
+        view.setBackgroundResource(R.drawable.bg_status_badge);
+        view.setBackgroundTintList(context.getColorStateList(background));
+        view.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, 0, 0, 0);
+        TextViewCompat.setCompoundDrawableTintList(view, ink);
     }
 }

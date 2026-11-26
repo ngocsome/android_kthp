@@ -130,6 +130,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rooms;
     }
 
+    // Các phòng có thay đổi trạng thái gần đây, mỗi phòng chỉ xuất hiện một lần.
+    public ArrayList<Room> getRecentlyUpdatedRooms(int limit) {
+        ArrayList<Room> rooms = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().rawQuery(
+                "SELECT r.* FROM Room r JOIN StatusHistory h ON h.room_code = r.room_code " +
+                        "GROUP BY r.id ORDER BY MAX(h.changed_at) DESC, MAX(h.id) DESC LIMIT ?",
+                new String[]{String.valueOf(Math.max(0, limit))})) {
+            while (cursor.moveToNext()) rooms.add(cursorToRoom(cursor));
+        }
+        return rooms;
+    }
+
     // 4. Lấy phòng theo tầng
     public ArrayList<Room> getRoomsByFloor(int floor) {
 
@@ -213,27 +225,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return result;
-    }
-
-    // 7. Tìm kiếm phòng
-    public ArrayList<Room> searchRooms(String keyword) {
-
-        ArrayList<Room> rooms = new ArrayList<>();
-
-        SQLiteDatabase db = getReadableDatabase();
-
-        Cursor cursor = db.rawQuery(
-                "SELECT * FROM Room WHERE room_code LIKE ? ORDER BY room_code",
-                new String[]{"%" + keyword + "%"}
-        );
-
-        while (cursor.moveToNext()) {
-            rooms.add(cursorToRoom(cursor));
-        }
-
-        cursor.close();
-
-        return rooms;
     }
 
     // 8. Đếm phòng theo trạng thái

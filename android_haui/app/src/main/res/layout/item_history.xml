@@ -1,50 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Một dòng lịch sử đổi trạng thái -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="12dp">
+    android:orientation="vertical"
+    android:padding="@dimen/space_medium">
+    <TextView
+        android:id="@+id/txtHistoryTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Haui.Meta" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Haui.Label"
+        android:text="@string/history_label_before"
+        android:layout_marginTop="@dimen/space_small" />
 
     <TextView
         android:id="@+id/txtHistoryOld"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="3dp"
-        android:text="Trống"
-        android:textSize="11sp"
-        android:textStyle="bold"/>
+        android:textAppearance="@style/TextAppearance.Haui.Label"
+        android:paddingStart="@dimen/space_small"
+        android:paddingEnd="@dimen/space_small"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="4dp" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="6dp"
-        android:text="→"
-        android:textColor="#8992A5"
-        android:textSize="14sp"/>
+        android:textAppearance="@style/TextAppearance.Haui.Label"
+        android:text="@string/history_transition"
+        android:layout_marginTop="4dp" />
 
     <TextView
         android:id="@+id/txtHistoryNew"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="3dp"
-        android:text="Bảo trì"
-        android:textSize="11sp"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:id="@+id/txtHistoryTime"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="end"
-        android:text="19/11/2026 20:30"
-        android:textColor="#8992A5"
-        android:textSize="12sp"/>
-
+        android:textAppearance="@style/TextAppearance.Haui.Label"
+        android:paddingStart="@dimen/space_small"
+        android:paddingEnd="@dimen/space_small"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="4dp" />
 </LinearLayout>

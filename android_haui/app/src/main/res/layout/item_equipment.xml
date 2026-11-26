@@ -1,48 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Một dòng thiết bị trong trang chi tiết phòng -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="12dp"
-    android:background="?attr/selectableItemBackground">
-
-    <LinearLayout
-        android:layout_width="0dp"
+    android:orientation="vertical"
+    android:minHeight="@dimen/touch_target"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="@dimen/space_medium">
+    <TextView
+        android:id="@+id/txtEquipmentName"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:textAppearance="@style/TextAppearance.Haui.Body" />
 
-        <TextView
-            android:id="@+id/txtEquipmentName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Máy chiếu"
-            android:textColor="#19243A"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/txtEquipmentQuantity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:text="Số lượng: 1"
-            android:textColor="#8992A5"
-            android:textSize="12sp"/>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/txtEquipmentQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Haui.Meta" />
 
     <TextView
         android:id="@+id/txtEquipmentCondition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="4dp"
-        android:text="Tốt"
-        android:textSize="11sp"
-        android:textStyle="bold"/>
-
+        android:textAppearance="@style/TextAppearance.Haui.Label"
+        android:paddingStart="@dimen/space_small"
+        android:paddingEnd="@dimen/space_small"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="4dp" />
 </LinearLayout>

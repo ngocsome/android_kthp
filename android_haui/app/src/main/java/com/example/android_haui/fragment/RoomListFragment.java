@@ -11,8 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.google.android.material.chip.Chip;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +25,8 @@ import com.example.android_haui.adapter.RoomAdapter;
 import com.example.android_haui.database.DatabaseHelper;
 import com.example.android_haui.model.Room;
 import com.example.android_haui.utils.Constants;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 
@@ -36,10 +41,10 @@ public class RoomListFragment extends Fragment {
     private TextView txtRoomCount;
     private TextView txtEmpty;
 
-    private TextView btnFilterAll;
-    private TextView btnFilterEmpty;
-    private TextView btnFilterInUse;
-    private TextView btnFilterMaintenance;
+    private Chip btnFilterAll;
+    private Chip btnFilterEmpty;
+    private Chip btnFilterInUse;
+    private Chip btnFilterMaintenance;
 
     private RoomAdapter adapter;
 
@@ -48,6 +53,7 @@ public class RoomListFragment extends Fragment {
 
     // Trạng thái đang được chọn
     private String currentFilter = "ALL";
+    private ImageButton btnClearSearch;
 
     @Nullable
     @Override
@@ -69,6 +75,10 @@ public class RoomListFragment extends Fragment {
             @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
+
+        if (savedInstanceState != null) {
+            currentFilter = savedInstanceState.getString("room_status", "ALL");
+        }
 
         // Khởi tạo database
         dbHelper = new DatabaseHelper(requireContext());
@@ -96,6 +106,7 @@ public class RoomListFragment extends Fragment {
 
         // Xử lý bộ lọc
         setupFilters();
+        updateFilterUI();
 
         // Sự kiện chọn phòng
         lvRoomList.setOnItemClickListener(
@@ -117,6 +128,7 @@ public class RoomListFragment extends Fragment {
 
         edtSearchRoom = view.findViewById(
                 R.id.edtSearchRoom);
+        btnClearSearch = view.findViewById(R.id.btnClearRoomSearch);
 
         lvRoomList = view.findViewById(
                 R.id.lvRoomList);
@@ -152,6 +164,15 @@ public class RoomListFragment extends Fragment {
 
     // 3. Tìm kiếm phòng theo mã
     private void setupSearch() {
+        btnClearSearch.setOnClickListener(v -> edtSearchRoom.setText(""));
+        edtSearchRoom.setOnEditorActionListener((textView, actionId, event) -> {
+            if (actionId != EditorInfo.IME_ACTION_SEARCH) return false;
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(requireActivity().getWindow(), edtSearchRoom);
+            controller.hide(WindowInsetsCompat.Type.ime());
+            edtSearchRoom.clearFocus();
+            return true;
+        });
 
         edtSearchRoom.addTextChangedListener(
                 new TextWatcher() {
@@ -211,50 +232,11 @@ public class RoomListFragment extends Fragment {
     // 5. Cập nhật giao diện bộ lọc
     private void updateFilterUI() {
 
-        TextView[] buttons = {
-                btnFilterAll,
-                btnFilterEmpty,
-                btnFilterInUse,
-                btnFilterMaintenance
-        };
-
-        String[] filters = {
-                "ALL",
-                Constants.EMPTY,
-                Constants.IN_USE,
-                Constants.MAINTENANCE
-        };
-
-        for (int i = 0; i < buttons.length; i++) {
-
-            if (currentFilter.equals(filters[i])) {
-
-                buttons[i].setBackgroundResource(
-                        R.drawable.bg_filter_selected);
-
-                buttons[i].setTextColor(
-                        android.graphics.Color.WHITE);
-
-            } else {
-
-                buttons[i].setBackgroundResource(
-                        R.drawable.bg_filter_normal);
-
-                if (i == 1) {
-                    buttons[i].setTextColor(
-                            android.graphics.Color.parseColor("#29965C"));
-                } else if (i == 2) {
-                    buttons[i].setTextColor(
-                            android.graphics.Color.parseColor("#3264BB"));
-                } else if (i == 3) {
-                    buttons[i].setTextColor(
-                            android.graphics.Color.parseColor("#B77B18"));
-                } else {
-                    buttons[i].setTextColor(
-                            android.graphics.Color.parseColor("#526078"));
-                }
-            }
-        }
+        Chip selected = btnFilterAll;
+        if (Constants.EMPTY.equals(currentFilter)) selected = btnFilterEmpty;
+        if (Constants.IN_USE.equals(currentFilter)) selected = btnFilterInUse;
+        if (Constants.MAINTENANCE.equals(currentFilter)) selected = btnFilterMaintenance;
+        selected.setChecked(true);
     }
 
     // 6. Tìm kiếm và lọc danh sách phòng
@@ -284,6 +266,9 @@ public class RoomListFragment extends Fragment {
             }
         }
 
+        btnClearSearch.setVisibility(
+                edtSearchRoom.length() > 0 ? View.VISIBLE : View.GONE);
+
         // Cập nhật Adapter
         adapter.notifyDataSetChanged();
 
@@ -307,8 +292,26 @@ public class RoomListFragment extends Fragment {
     private void updateRoomCount() {
 
         txtRoomCount.setText(
-                filteredRooms.size() + " phòng học"
+                getString(R.string.room_result_count, filteredRooms.size())
         );
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("room_keyword", edtSearchRoom.getText().toString());
+        outState.putString("room_status", currentFilter);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            edtSearchRoom.setText(savedInstanceState.getString("room_keyword", ""));
+            edtSearchRoom.setSelection(edtSearchRoom.length());
+        }
+        updateFilterUI();
+        filterRooms();
     }
 
     // Làm mới dữ liệu khi quay lại màn hình

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/page_gutter"
+        android:paddingEnd="@dimen/page_gutter"
+        android:paddingTop="@dimen/space_medium"
+        android:paddingBottom="@dimen/space_section">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Haui.Screen"
+            android:text="@string/overview_title"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/space_medium"
+            android:padding="20dp"
+            android:background="@drawable/overview_total_bg">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Label"
+                android:text="@string/overview_total_label"
+                android:textColor="@color/hero_ink" />
+
+            <TextView
+                android:id="@+id/overviewTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Metric"
+                android:textColor="@color/hero_ink" />
+
+            <TextView
+                android:id="@+id/overviewFloors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Body"
+                android:textColor="@color/hero_ink" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Haui.Section"
+            android:text="@string/room_status"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/space_section" />
+
+        <LinearLayout
+            android:id="@+id/overviewStatus0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/space_small"
+            android:background="@drawable/bg_room_card"
+            android:padding="@dimen/space_medium"
+            android:minHeight="@dimen/touch_target"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Body"
+                android:text="@string/overview_empty"
+                app:drawableStartCompat="@drawable/ic_status_empty"
+                app:drawableTint="@color/empty_fg"
+                android:drawablePadding="12dp"
+                android:gravity="center_vertical"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/overviewCount0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Section"
+                android:textColor="@color/empty_fg" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/overviewStatus1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/space_small"
+            android:background="@drawable/bg_room_card"
+            android:padding="@dimen/space_medium"
+            android:minHeight="@dimen/touch_target"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Body"
+                android:text="@string/overview_in_use"
+                app:drawableStartCompat="@drawable/ic_status_use"
+                app:drawableTint="@color/use_fg"
+                android:drawablePadding="12dp"
+                android:gravity="center_vertical"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/overviewCount1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Section"
+                android:textColor="@color/use_fg" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/overviewStatus2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/space_small"
+            android:background="@drawable/bg_room_card"
+            android:padding="@dimen/space_medium"
+            android:minHeight="@dimen/touch_target"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Body"
+                android:text="@string/overview_maintenance"
+                app:drawableStartCompat="@drawable/ic_status_maintenance"
+                app:drawableTint="@color/maintenance_fg"
+                android:drawablePadding="12dp"
+                android:gravity="center_vertical"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/overviewCount2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Haui.Section"
+                android:textColor="@color/maintenance_fg" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/overviewRooms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Material3.Button"
+            android:minHeight="48dp"
+            android:text="@string/overview_room_list"
+            android:layout_marginTop="@dimen/space_medium"
+            app:icon="@drawable/ic_room_list" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/overviewStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:minHeight="48dp"
+            android:text="@string/overview_statistics"
+            app:icon="@drawable/ic_statistics" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Haui.Section"
+            android:text="@string/overview_recent"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/space_section" />
+
+        <LinearLayout
+            android:id="@+id/overviewRecent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/overviewNoHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Haui.Meta"
+            android:text="@string/overview_empty_history"
+            android:layout_marginTop="@dimen/space_small" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/overviewAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:minHeight="48dp"
+            android:text="@string/overview_all"
+            android:layout_marginTop="@dimen/space_small" />
+    </LinearLayout>
+</ScrollView>
