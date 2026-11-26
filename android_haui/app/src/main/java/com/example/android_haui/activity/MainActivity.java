@@ -2,7 +2,7 @@ package com.example.android_haui.activity;
 
 import com.example.android_haui.R;
 import com.example.android_haui.fragment.RoomListFragment;
-import com.example.android_haui.fragment.SearchFragment;
+import com.example.android_haui.fragment.OverviewFragment;
 import com.example.android_haui.fragment.StatisticsFragment;
 import com.example.android_haui.fragment.StatusFragment;
 
@@ -30,7 +30,8 @@ public class MainActivity extends AppCompatActivity {
         // Chừa khoảng trống cho thanh trạng thái / thanh điều hướng hệ thống
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            v.setPadding(bars.left, bars.top, bars.right, Math.max(bars.bottom, ime.bottom));
             return WindowInsetsCompat.CONSUMED;
         });
 
@@ -40,10 +41,11 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
-            if (id == R.id.nav_rooms) {
+            if (id == R.id.nav_overview) {
+                showFragment(new OverviewFragment());
+            } else if (id == R.id.nav_rooms) {
                 showFragment(new RoomListFragment());
-            } else if (id == R.id.nav_search) {
-                showFragment(new SearchFragment());
+
             } else if (id == R.id.nav_status) {
                 showFragment(new StatusFragment());
             } else if (id == R.id.nav_statistics) {
@@ -55,10 +57,23 @@ public class MainActivity extends AppCompatActivity {
         // Chọn lại mục đang mở thì không làm gì
         bottomNav.setOnItemReselectedListener(item -> { });
 
-        // Mặc định hiển thị danh sách phòng
+        // Mặc định hiển thị tổng quan; giữ Fragment được khôi phục khi xoay màn hình.
         if (savedInstanceState == null) {
-            showFragment(new RoomListFragment());
+            showFragment(new OverviewFragment());
         }
+    }
+
+    public void selectDestination(int itemId) {
+        bottomNav.setSelectedItemId(itemId);
+    }
+
+    public void openStatistics(String status) {
+        bottomNav.setSelectedItemId(R.id.nav_statistics);
+        StatisticsFragment fragment = new StatisticsFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString("initial_status", status);
+        fragment.setArguments(arguments);
+        showFragment(fragment);
     }
 
     // Thay Fragment đang hiển thị

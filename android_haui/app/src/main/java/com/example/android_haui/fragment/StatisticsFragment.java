@@ -3,11 +3,9 @@ package com.example.android_haui.fragment;
 import com.example.android_haui.R;
 import com.example.android_haui.activity.RoomDetailActivity;
 
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +61,11 @@ public class StatisticsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         dbHelper = new DatabaseHelper(requireContext());
+        if (savedInstanceState != null) {
+            selectedStatus = savedInstanceState.getString("selected_status", Constants.EMPTY);
+        } else if (getArguments() != null) {
+            selectedStatus = getArguments().getString("initial_status", Constants.EMPTY);
+        }
 
         txtTotalRooms = view.findViewById(R.id.txtTotalRooms);
         txtSelectedStatusTitle = view.findViewById(R.id.txtSelectedStatusTitle);
@@ -103,19 +106,21 @@ public class StatisticsFragment extends Fragment {
 
             View card = statCards[i];
             TextView txtLabel = card.findViewById(R.id.txtStatLabel);
-            TextView txtCount = card.findViewById(R.id.txtStatCount);
-            TextView txtPercent = card.findViewById(R.id.txtStatPercent);
+            TextView txtValue = card.findViewById(R.id.txtStatValue);
             LinearProgressIndicator progress = card.findViewById(R.id.progressStat);
 
             StatusUtils.applyBadge(txtLabel, status);
-            txtCount.setText(String.valueOf(count));
-            txtPercent.setText("phòng · " + percent + "%");
-            progress.setIndicatorColor(StatusUtils.getTextColor(status));
+            txtValue.setText(getString(R.string.stats_percent, count, percent));
+            int ink = requireContext().getColor(StatusUtils.foreground(status));
+            progress.setIndicatorColor(ink);
+            card.setSelected(status.equals(selectedStatus));
+            card.setContentDescription(getString(R.string.stat_row_description,
+                    getString(StatusUtils.label(status)), count, percent));
             progress.setProgressCompat(percent, false);
 
             // Viền nổi bật cho thẻ đang chọn
             card.setBackground(createCardBackground(
-                    status.equals(selectedStatus) ? StatusUtils.getTextColor(status) : 0));
+                    card.isSelected() ? ink : 0));
         }
 
         // 2. Thống kê theo tầng
@@ -148,39 +153,20 @@ public class StatisticsFragment extends Fragment {
 
         layoutFloorStats.removeAllViews();
 
+        if (floorMap.isEmpty()) {
+            addEmptyMessage(layoutFloorStats, R.string.no_rooms);
+        }
         for (Map.Entry<Integer, int[]> entry : floorMap.entrySet()) {
             int[] counts = entry.getValue();
 
-            LinearLayout row = new LinearLayout(requireContext());
-            row.setOrientation(LinearLayout.HORIZONTAL);
-            row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setPadding(0, dp(10), 0, dp(10));
-
-            TextView txtFloor = new TextView(requireContext());
-            txtFloor.setText("Tầng " + entry.getKey());
-            txtFloor.setTextColor(Color.parseColor("#263247"));
-            txtFloor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-            txtFloor.setTypeface(null, android.graphics.Typeface.BOLD);
-            row.addView(txtFloor, new LinearLayout.LayoutParams(
-                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-
-            for (int i = 0; i < counts.length; i++) {
-                TextView badge = new TextView(requireContext());
-                StatusUtils.applyBadge(badge, StatusUtils.STATUSES[i]);
-                badge.setText(String.valueOf(counts[i]));
-                badge.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                badge.setTypeface(null, android.graphics.Typeface.BOLD);
-                badge.setGravity(Gravity.CENTER);
-                badge.setMinWidth(dp(36));
-                badge.setPadding(dp(8), dp(4), dp(8), dp(4));
-
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-                lp.setMarginStart(dp(6));
-                row.addView(badge, lp);
-            }
-
+            View row = getLayoutInflater().inflate(R.layout.item_stat_group, layoutFloorStats, false);
+            TextView title = row.findViewById(R.id.groupTitle);
+            TextView summary = row.findViewById(R.id.groupSummary);
+            title.setText(getString(R.string.overview_floor, entry.getKey()));
+            summary.setText(getString(R.string.floor_breakdown,
+                    getString(R.string.overview_empty), counts[0],
+                    getString(R.string.overview_in_use), counts[1],
+                    getString(R.string.overview_maintenance), counts[2]));
             layoutFloorStats.addView(row);
         }
     }
@@ -203,7 +189,7 @@ public class StatisticsFragment extends Fragment {
             totalBroken += equipment.getQuantity();
         }
 
-        txtBrokenSummary.setText(totalBroken + " thiết bị · " + byRoom.size() + " phòng");
+        txtBrokenSummary.setText(getString(R.string.stats_broken_summary, totalBroken, byRoom.size()));
 
         layoutBrokenRooms.removeAllViews();
 
@@ -213,9 +199,9 @@ public class StatisticsFragment extends Fragment {
 
             if (!first) {
                 View divider = new View(requireContext());
-                divider.setBackgroundColor(Color.parseColor("#EEF0F5"));
+                divider.setBackgroundColor(requireContext().getColor(R.color.border));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, 1);
+                        ViewGroup.LayoutParams.MATCH_PARENT, dp(1));
                 lp.setMarginStart(dp(16));
                 lp.setMarginEnd(dp(16));
                 layoutBrokenRooms.addView(divider, lp);
@@ -231,49 +217,42 @@ public class StatisticsFragment extends Fragment {
                 roomBroken += equipment.getQuantity();
             }
 
-            LinearLayout row = new LinearLayout(requireContext());
-            row.setOrientation(LinearLayout.VERTICAL);
+            View row = getLayoutInflater().inflate(R.layout.item_stat_group, layoutBrokenRooms, false);
             row.setPadding(dp(16), dp(12), dp(16), dp(12));
-            TypedValue outValue = new TypedValue();
-            requireContext().getTheme().resolveAttribute(
-                    android.R.attr.selectableItemBackground, outValue, true);
-            row.setBackgroundResource(outValue.resourceId);
+            row.setMinimumHeight(dp(48));
+            row.setFocusable(true);
+            TypedValue ripple = new TypedValue();
+            requireContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, ripple, true);
+            row.setBackgroundResource(ripple.resourceId);
 
-            TextView txtRoom = new TextView(requireContext());
-            txtRoom.setText("Phòng " + roomCode + " · " + roomBroken + " hỏng");
-            txtRoom.setTextColor(Color.parseColor("#19243A"));
-            txtRoom.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-            txtRoom.setTypeface(null, android.graphics.Typeface.BOLD);
-            row.addView(txtRoom);
-
-            TextView txtNames = new TextView(requireContext());
-            txtNames.setText(names.toString());
-            txtNames.setTextColor(Color.parseColor("#C8423B"));
-            txtNames.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-            txtNames.setPadding(0, dp(3), 0, 0);
-            row.addView(txtNames);
-
+            TextView title = row.findViewById(R.id.groupTitle);
+            TextView summary = row.findViewById(R.id.groupSummary);
+            title.setText(getString(R.string.stats_broken_room, roomCode, roomBroken));
+            summary.setText(names.toString());
             row.setOnClickListener(v -> RoomDetailActivity.open(requireContext(), roomCode));
 
             layoutBrokenRooms.addView(row);
         }
 
         if (byRoom.isEmpty()) {
-            TextView empty = new TextView(requireContext());
-            empty.setText("Không có thiết bị hỏng");
-            empty.setTextColor(Color.parseColor("#8992A5"));
-            empty.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-            empty.setPadding(dp(16), dp(14), dp(16), dp(14));
-            layoutBrokenRooms.addView(empty);
+            addEmptyMessage(layoutBrokenRooms, R.string.no_broken);
         }
+    }
+
+    private void addEmptyMessage(LinearLayout container, int message) {
+        TextView empty = new TextView(requireContext());
+        empty.setTextAppearance(R.style.TextAppearance_Haui_Meta);
+        empty.setText(message);
+        empty.setPadding(dp(16), dp(12), dp(16), dp(12));
+        container.addView(empty);
     }
 
     // Hiển thị các phòng có trạng thái đang chọn
     private void showRoomsOfSelectedStatus() {
         ArrayList<Room> rooms = dbHelper.getRoomsByStatus(selectedStatus);
 
-        txtSelectedStatusTitle.setText("Phòng " + StatusUtils.getLabel(selectedStatus).toLowerCase()
-                + " (" + rooms.size() + ")");
+        txtSelectedStatusTitle.setText(getString(R.string.stats_selected,
+                getString(StatusUtils.label(selectedStatus)), rooms.size()));
 
         layoutStatusRooms.removeAllViews();
 
@@ -298,18 +277,24 @@ public class StatisticsFragment extends Fragment {
     // Nền thẻ trắng bo góc, có viền màu khi được chọn
     private GradientDrawable createCardBackground(int highlightColor) {
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.WHITE);
-        bg.setCornerRadius(dp(14));
+        bg.setColor(requireContext().getColor(R.color.surface));
+        bg.setCornerRadius(getResources().getDimension(R.dimen.card_radius));
         if (highlightColor != 0) {
             bg.setStroke(dp(2), highlightColor);
         } else {
-            bg.setStroke(dp(1), Color.parseColor("#EEF0F5"));
+            bg.setStroke(dp(1), requireContext().getColor(R.color.border));
         }
         return bg;
     }
 
     private int dp(int value) {
         return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("selected_status", selectedStatus);
     }
 
     @Override

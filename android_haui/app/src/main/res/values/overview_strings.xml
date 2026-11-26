@@ -1,0 +1,22 @@
+<resources>
+    <string name="overview_title">Tổng quan</string>
+    <string name="overview_brand">Classroom Manager</string>
+    <string name="overview_hello">Xin chào,</string>
+    <string name="overview_manager">Quản lý giảng đường</string>
+    <string name="overview_spaces">KHÔNG GIAN HỌC TẬP</string>
+    <string name="overview_rooms_unit">phòng học</string>
+    <string name="overview_floors">%1$d tầng</string>
+    <string name="overview_room_list">Danh sách phòng</string>
+    <string name="overview_statistics">Thống kê phòng</string>
+    <string name="overview_recent">Cập nhật gần đây</string>
+    <string name="overview_all">Xem tất cả</string>
+    <string name="overview_empty_history">Chưa có cập nhật trạng thái phòng</string>
+    <string name="overview_empty">Trống</string>
+    <string name="overview_in_use">Đang sử dụng</string>
+    <string name="overview_maintenance">Bảo trì</string>
+    <string name="overview_room_name">Phòng học %1$s</string>
+    <string name="overview_floor">Tầng %1$d</string>
+    <string name="nav_management">Quản lý</string>
+    <string name="nav_rooms_label">Phòng học</string>
+    <string name="nav_statistics_label">Thống kê</string>
+</resources>

@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-
-    <!-- Màu chủ đạo của ứng dụng -->
-    <color name="primary">#2447B2</color>
-    <color name="background">#F7F8FC</color>
-    <color name="text_dark">#19243A</color>
-    <color name="text_gray">#8992A5</color>
-    <color name="border">#EEF0F5</color>
-    <color name="nav_indicator">#E5EEFF</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="primary">#0F766E</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="background">#F0FDFA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_dark">#134E4A</color>
+    <color name="text_gray">#475569</color>
+    <color name="border">#D0E0DD</color>
+    <color name="outline">#607673</color>
+    <color name="nav_indicator">#CCFBED</color>
+    <color name="empty_fg">#18603F</color>
+    <color name="empty_bg">#DCF5E6</color>
+    <color name="use_fg">#184E92</color>
+    <color name="use_bg">#E3EEFF</color>
+    <color name="maintenance_fg">#814900</color>
+    <color name="maintenance_bg">#FFECC5</color>
+    <color name="broken_fg">#A32B29</color>
+    <color name="broken_bg">#FFE6E2</color>
+    <color name="hero">#115E59</color>
+    <color name="hero_ink">#FFFFFF</color>
+    <color name="system_navigation_bar">#142724</color>
 </resources>

@@ -1,12 +1,28 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="light_system_bars">true</bool>
     <style name="Base.Theme.Android_haui" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorPrimaryContainer">@color/nav_indicator</item>
+        <item name="colorOnPrimaryContainer">@color/text_dark</item>
+        <item name="colorSecondary">@color/primary</item>
+        <item name="colorOnSecondary">@color/on_primary</item>
+        <item name="colorSecondaryContainer">@color/nav_indicator</item>
+        <item name="colorOnSecondaryContainer">@color/text_dark</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_dark</item>
+        <item name="colorSurfaceVariant">@color/background</item>
+        <item name="colorOnSurfaceVariant">@color/text_gray</item>
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorError">@color/broken_fg</item>
+        <item name="colorErrorContainer">@color/broken_bg</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:windowBackground">@color/background</item>
         <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/system_navigation_bar</item>
+        <item name="android:windowLightStatusBar">@bool/light_system_bars</item>
     </style>
-
-    <!-- Nền chỉ báo của mục đang chọn trên thanh điều hướng -->
     <style name="Widget.App.NavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/nav_indicator</item>
     </style>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FilterLimit">
+        <item name="android:orientation">vertical</item>
+        <item name="layout_constraintGuide_percent">0.46</item>
+    </style>
+
+    <style name="FilterPanel">
+        <item name="android:layout_height">0dp</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintEnd_toStartOf">@id/filterLimit</item>
+    </style>
+
+    <style name="FilterResults">
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintStart_toEndOf">@id/filterLimit</item>
+        <item name="android:paddingTop">@dimen/space_medium</item>
+    </style>
+</resources>

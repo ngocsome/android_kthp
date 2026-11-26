@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.material.chip.Chip;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +31,7 @@ public class StatusFragment extends Fragment {
 
     private ListView lvStatusRooms;
     private TextView txtStatusCount;
-    private TextView[] floorChips;
+    private Chip[] floorChips;
 
     private RoomAdapter adapter;
     private final ArrayList<Room> rooms = new ArrayList<>();
@@ -56,19 +57,24 @@ public class StatusFragment extends Fragment {
         lvStatusRooms = view.findViewById(R.id.lvStatusRooms);
         txtStatusCount = view.findViewById(R.id.txtStatusCount);
 
-        floorChips = new TextView[]{
+        floorChips = new Chip[]{
                 view.findViewById(R.id.btnFloorAll),
                 view.findViewById(R.id.btnFloor14),
                 view.findViewById(R.id.btnFloor15),
                 view.findViewById(R.id.btnFloor16)
         };
 
+        if (savedInstanceState != null) {
+            selectedFloorIndex = savedInstanceState.getInt("floor_filter", 0);
+        }
+        floorChips[selectedFloorIndex].setChecked(true);
+        lvStatusRooms.setEmptyView(view.findViewById(R.id.txtManagementEmpty));
+
         // Chọn tầng
         for (int i = 0; i < floorChips.length; i++) {
             final int index = i;
             floorChips[i].setOnClickListener(v -> {
                 selectedFloorIndex = index;
-                StatusUtils.updateChips(floorChips, selectedFloorIndex);
                 loadRooms();
             });
         }
@@ -101,7 +107,7 @@ public class StatusFragment extends Fragment {
         }
 
         adapter.notifyDataSetChanged();
-        txtStatusCount.setText(rooms.size() + " phòng học");
+        txtStatusCount.setText(getString(R.string.room_result_count, rooms.size()));
     }
 
     // Hộp thoại chọn trạng thái mới
@@ -110,7 +116,7 @@ public class StatusFragment extends Fragment {
         int checked = -1;
 
         for (int i = 0; i < StatusUtils.STATUSES.length; i++) {
-            labels[i] = StatusUtils.getLabel(StatusUtils.STATUSES[i]);
+            labels[i] = getString(StatusUtils.label(StatusUtils.STATUSES[i]));
             if (StatusUtils.STATUSES[i].equals(room.getStatus())) {
                 checked = i;
             }
@@ -119,33 +125,39 @@ public class StatusFragment extends Fragment {
         final int[] selected = {checked};
 
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Phòng " + room.getRoomCode())
+                .setTitle(getString(R.string.room_short, room.getRoomCode()))
                 .setSingleChoiceItems(labels, checked, (dialog, which) -> selected[0] = which)
-                .setNegativeButton("Hủy", null)
-                .setPositiveButton("Lưu", (dialog, which) -> {
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.save, (dialog, which) -> {
                     if (selected[0] < 0) return;
 
                     String newStatus = StatusUtils.STATUSES[selected[0]];
 
                     if (newStatus.equals(room.getStatus())) {
                         Toast.makeText(requireContext(),
-                                "Trạng thái không thay đổi", Toast.LENGTH_SHORT).show();
+                                R.string.status_unchanged, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     if (dbHelper != null
                             && dbHelper.updateRoomStatus(room.getRoomCode(), newStatus) > 0) {
                         Toast.makeText(requireContext(),
-                                "Đã cập nhật phòng " + room.getRoomCode() + ": "
-                                        + StatusUtils.getLabel(newStatus),
+                                getString(R.string.status_updated, room.getRoomCode(),
+                                        getString(StatusUtils.label(newStatus))),
                                 Toast.LENGTH_SHORT).show();
                         loadRooms();
                     } else {
                         Toast.makeText(requireContext(),
-                                "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                                R.string.update_failed, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .show();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle state) {
+        super.onSaveInstanceState(state);
+        state.putInt("floor_filter", selectedFloorIndex);
     }
 
     @Override

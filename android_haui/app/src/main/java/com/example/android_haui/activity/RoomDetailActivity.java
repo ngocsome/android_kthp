@@ -46,11 +46,7 @@ public class RoomDetailActivity extends AppCompatActivity {
 
     private TextView txtDetailCode;
     private TextView txtDetailStatus;
-    private TextView txtDetailName;
-    private TextView txtDetailRoomCode;
-    private TextView txtDetailBuilding;
     private TextView txtDetailFloor;
-    private TextView txtDetailStatusText;
     private RadioGroup rgStatus;
 
     // Thiết bị
@@ -96,7 +92,7 @@ public class RoomDetailActivity extends AppCompatActivity {
         room = roomCode == null ? null : dbHelper.getRoomByCode(roomCode);
 
         if (room == null) {
-            Toast.makeText(this, "Không tìm thấy phòng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.room_missing, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -113,11 +109,7 @@ public class RoomDetailActivity extends AppCompatActivity {
 
         txtDetailCode = findViewById(R.id.txtDetailCode);
         txtDetailStatus = findViewById(R.id.txtDetailStatus);
-        txtDetailName = findViewById(R.id.txtDetailName);
-        txtDetailRoomCode = findViewById(R.id.txtDetailRoomCode);
-        txtDetailBuilding = findViewById(R.id.txtDetailBuilding);
         txtDetailFloor = findViewById(R.id.txtDetailFloor);
-        txtDetailStatusText = findViewById(R.id.txtDetailStatusText);
         rgStatus = findViewById(R.id.rgStatus);
 
         layoutEquipments = findViewById(R.id.layoutEquipments);
@@ -135,16 +127,11 @@ public class RoomDetailActivity extends AppCompatActivity {
     private void showRoom() {
         String status = room.getStatus();
 
-        txtDetailCode.setText(room.getRoomCode());
-        txtDetailName.setText("Phòng học " + room.getRoomCode());
-        txtDetailRoomCode.setText(room.getRoomCode());
-        txtDetailBuilding.setText("Khu A - CS1 HaUI");
-        txtDetailFloor.setText("Tầng " + room.getFloor());
+        txtDetailCode.setText(getString(R.string.overview_room_name, room.getRoomCode()));
+        txtDetailFloor.setText(getString(R.string.overview_floor, room.getFloor()));
 
         StatusUtils.applyBadge(txtDetailStatus, status);
 
-        txtDetailStatusText.setText(StatusUtils.getLabel(status));
-        txtDetailStatusText.setTextColor(StatusUtils.getTextColor(status));
 
         // Chọn sẵn trạng thái hiện tại
         if (Constants.EMPTY.equals(status)) {
@@ -170,12 +157,12 @@ public class RoomDetailActivity extends AppCompatActivity {
         } else if (checkedId == R.id.rbMaintenance) {
             newStatus = Constants.MAINTENANCE;
         } else {
-            Toast.makeText(this, "Vui lòng chọn trạng thái", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.choose_status, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (newStatus.equals(room.getStatus())) {
-            Toast.makeText(this, "Trạng thái không thay đổi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.status_unchanged, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -186,11 +173,11 @@ public class RoomDetailActivity extends AppCompatActivity {
             showRoom();
             loadHistory();
             Toast.makeText(this,
-                    "Đã cập nhật phòng " + room.getRoomCode() + ": "
-                            + StatusUtils.getLabel(newStatus),
+                    getString(R.string.status_updated, room.getRoomCode(),
+                            getString(StatusUtils.label(newStatus))),
                     Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.update_failed, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -214,9 +201,9 @@ public class RoomDetailActivity extends AppCompatActivity {
             // Đường kẻ ngăn cách giữa các dòng
             if (i > 0) {
                 View divider = new View(this);
-                divider.setBackgroundColor(0xFFEEF0F5);
+                divider.setBackgroundColor(getColor(R.color.border));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                        LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
                 lp.setMarginStart(dp(16));
                 lp.setMarginEnd(dp(16));
                 layoutEquipments.addView(divider, lp);
@@ -229,7 +216,7 @@ public class RoomDetailActivity extends AppCompatActivity {
             TextView txtCondition = row.findViewById(R.id.txtEquipmentCondition);
 
             txtName.setText(equipment.getName());
-            txtQuantity.setText("Số lượng: " + equipment.getQuantity());
+            txtQuantity.setText(getString(R.string.quantity_fmt, equipment.getQuantity()));
             StatusUtils.applyConditionBadge(txtCondition, equipment.getCondition());
 
             row.setOnClickListener(v -> showEquipmentDialog(equipment));
@@ -243,8 +230,8 @@ public class RoomDetailActivity extends AppCompatActivity {
 
         if (equipments.isEmpty()) {
             TextView empty = new TextView(this);
-            empty.setText("Chưa có thiết bị nào");
-            empty.setTextColor(0xFF8992A5);
+            empty.setText(R.string.no_equipment);
+            empty.setTextColor(getColor(R.color.text_gray));
             empty.setTextSize(14);
             empty.setPadding(dp(16), dp(16), dp(16), dp(16));
             layoutEquipments.addView(empty);
@@ -253,9 +240,9 @@ public class RoomDetailActivity extends AppCompatActivity {
             txtEquipmentHint.setVisibility(View.VISIBLE);
         }
 
-        String summary = equipments.size() + " loại · " + total + " thiết bị";
+        String summary = getString(R.string.equipment_summary, equipments.size(), total);
         if (broken > 0) {
-            summary += " · " + broken + " hỏng";
+            summary = getString(R.string.equipment_summary_broken, summary, broken);
         }
         txtEquipmentSummary.setText(summary);
     }
@@ -282,10 +269,11 @@ public class RoomDetailActivity extends AppCompatActivity {
         }
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle(isEdit ? "Sửa thiết bị" : "Thêm thiết bị - Phòng " + room.getRoomCode())
+                .setTitle(isEdit ? getString(R.string.edit_equipment)
+                        : getString(R.string.equipment_add_title, room.getRoomCode()))
                 .setView(dialogView)
-                .setNegativeButton("Hủy", null)
-                .setPositiveButton("Lưu", null)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.save, null)
                 .show();
 
         // Tự xử lý nút Lưu để không đóng hộp thoại khi nhập sai
@@ -294,7 +282,8 @@ public class RoomDetailActivity extends AppCompatActivity {
             String quantityText = edtQuantity.getText().toString().trim();
 
             if (TextUtils.isEmpty(name)) {
-                edtName.setError("Vui lòng nhập tên thiết bị");
+                edtName.setError(getString(R.string.name_required));
+                edtName.requestFocus();
                 return;
             }
 
@@ -306,7 +295,8 @@ public class RoomDetailActivity extends AppCompatActivity {
             }
 
             if (quantity <= 0) {
-                edtQuantity.setError("Số lượng phải lớn hơn 0");
+                edtQuantity.setError(getString(R.string.positive_quantity));
+                edtQuantity.requestFocus();
                 return;
             }
 
@@ -327,12 +317,12 @@ public class RoomDetailActivity extends AppCompatActivity {
 
             if (success) {
                 Toast.makeText(this,
-                        isEdit ? "Đã cập nhật thiết bị" : "Đã thêm thiết bị",
+                        isEdit ? R.string.equipment_updated : R.string.equipment_added,
                         Toast.LENGTH_SHORT).show();
                 loadEquipments();
                 dialog.dismiss();
             } else {
-                Toast.makeText(this, "Lưu thất bại", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.save_failed, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -340,13 +330,12 @@ public class RoomDetailActivity extends AppCompatActivity {
     // 6. Xác nhận xóa thiết bị
     private void confirmDeleteEquipment(Equipment equipment) {
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Xóa thiết bị")
-                .setMessage("Xóa \"" + equipment.getName() + "\" khỏi phòng "
-                        + room.getRoomCode() + "?")
-                .setNegativeButton("Hủy", null)
-                .setPositiveButton("Xóa", (d, w) -> {
+                .setTitle(R.string.delete_equipment)
+                .setMessage(getString(R.string.confirm_delete, equipment.getName(), room.getRoomCode()))
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.delete, (d, w) -> {
                     if (dbHelper.deleteEquipment(equipment.getId()) > 0) {
-                        Toast.makeText(this, "Đã xóa thiết bị", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.equipment_deleted, Toast.LENGTH_SHORT).show();
                         loadEquipments();
                     }
                 })
@@ -368,9 +357,9 @@ public class RoomDetailActivity extends AppCompatActivity {
 
             if (i > 0) {
                 View divider = new View(this);
-                divider.setBackgroundColor(0xFFEEF0F5);
+                divider.setBackgroundColor(getColor(R.color.border));
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                        LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
                 lp.setMarginStart(dp(16));
                 lp.setMarginEnd(dp(16));
                 layoutHistory.addView(divider, lp);
@@ -389,8 +378,8 @@ public class RoomDetailActivity extends AppCompatActivity {
 
         if (histories.isEmpty()) {
             TextView empty = new TextView(this);
-            empty.setText("Chưa có thay đổi nào");
-            empty.setTextColor(0xFF8992A5);
+            empty.setText(R.string.no_history);
+            empty.setTextColor(getColor(R.color.text_gray));
             empty.setTextSize(14);
             empty.setPadding(dp(16), dp(16), dp(16), dp(16));
             layoutHistory.addView(empty);
